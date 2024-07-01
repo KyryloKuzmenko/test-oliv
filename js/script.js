@@ -1,19 +1,19 @@
 var customIcon1 = L.icon({
-  iconUrl: "../img/olivki.png",
+  iconUrl: "./img/olivki.png",
   iconSize: [38, 38],
   iconAnchor: [22, 20],
   popupAnchor: [-3, -76],
 });
 
 var customIcon2 = L.icon({
-  iconUrl: "../img/maslinki.png",
+  iconUrl: "./img/maslinki.png",
   iconSize: [38, 38],
   iconAnchor: [22, 20],
   popupAnchor: [-3, -76],
 });
 
 var customIcon3 = L.icon({
-  iconUrl: "../img/olive-can.png",
+  iconUrl: "./img/olive-can.png",
   iconSize: [38, 38],
   iconAnchor: [22, 20],
   popupAnchor: [-3, -76],
