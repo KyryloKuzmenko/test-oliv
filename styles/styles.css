@@ -1,0 +1,10 @@
+.popup-button {
+      display: block;
+      margin: 5px 0;
+      padding: 5px 10px;
+      background-color: #007bff;
+      color: white;
+      text-align: center;
+      border: none;
+      cursor: pointer;
+    }
