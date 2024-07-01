@@ -6,7 +6,7 @@ var customIcon1 = L.icon({
 });
 
 var customIcon2 = L.icon({
-  iconUrl: "../img/maslinki.png",
+  iconUrl: "test-oliv/img/maslinki.png",
   iconSize: [38, 38],
   iconAnchor: [22, 20],
   popupAnchor: [-3, -76],
