@@ -41,7 +41,7 @@ if (navigator.geolocation) {
         setTimeout(function () {
           map.removeLayer(marker);
           map.removeLayer(circle);
-        }, 30000);
+        }, 5000);
       }
 
       map.on("click", function (e) {
