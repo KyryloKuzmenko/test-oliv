@@ -57,43 +57,33 @@ if (navigator.geolocation) {
 
         const popupContent = document.createElement("div");
 
-        const icon1Button = document.createElement("img");
-        icon1Button.className = "icon-preview";
-        icon1Button.style.width = "38px";
-        icon1Button.style.height = "38px";
-        icon1Button.src = customIcon1.options.iconUrl;
-        icon1Button.onclick = function () {
-          sendMarker(lat, lng, customIcon1);
-          map.closePopup(); // Перенесено после добавления метки
-        };
+        const icon1Button = createIconButton(customIcon1, lat, lng);
         popupContent.appendChild(icon1Button);
 
-        const icon2Button = document.createElement("img");
-        icon2Button.className = "icon-preview";
-        icon2Button.style.width = "38px";
-        icon2Button.style.height = "38px";
-        icon2Button.src = customIcon2.options.iconUrl;
-        icon2Button.onclick = function () {
-          sendMarker(lat, lng, customIcon2);
-          map.closePopup(); // Перенесено после добавления метки
-        };
+        const icon2Button = createIconButton(customIcon2, lat, lng);
         popupContent.appendChild(icon2Button);
 
-        const icon3Button = document.createElement("img");
-        icon3Button.className = "icon-preview";
-        icon3Button.style.width = "48px";
-        icon3Button.style.height = "48px";
-        icon3Button.src = customIcon3.options.iconUrl;
-        icon3Button.onclick = function () {
-          sendMarker(lat, lng, customIcon3);
-          map.closePopup(); // Перенесено после добавления метки
-        };
+        const icon3Button = createIconButton(customIcon3, lat, lng);
         popupContent.appendChild(icon3Button);
 
         var popup = L.popup()
           .setLatLng([lat, lng])
           .setContent(popupContent)
           .openOn(map);
+
+        function createIconButton(icon, lat, lng) {
+          const iconButton = document.createElement("img");
+          iconButton.className = "icon-preview";
+          iconButton.style.width = "38px";
+          iconButton.style.height = "38px";
+          iconButton.src = icon.options.iconUrl;
+          iconButton.onclick = function (event) {
+            event.stopPropagation(); // Предотвращаем закрытие всплывающего окна
+            addMarkerAndCircle(lat, lng, icon);
+            map.closePopup();
+          };
+          return iconButton;
+        }
 
         function sendMarker(lat, lng, icon) {
           const marker = { lat, lng, icon };
