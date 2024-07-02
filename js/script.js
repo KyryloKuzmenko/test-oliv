@@ -19,9 +19,42 @@ var customIcon3 = L.icon({
   popupAnchor: [-3, -76],
 });
 
-//==================================country
+// WebSocket соединение с сервером на Heroku
+const socket = new WebSocket("wss://server-olivky.herokuapp.com");
 
-//==================================
+socket.onopen = function () {
+  console.log("WebSocket connection established.");
+};
+
+socket.onerror = function (error) {
+  console.error("WebSocket error: ", error);
+};
+
+socket.onmessage = function (event) {
+  const data = JSON.parse(event.data);
+
+  if (data.type === "initial-markers") {
+    data.markers.forEach((marker) => {
+      addMarkerAndCircle(marker.lat, marker.lng, getIconFromType(marker.type));
+    });
+  } else if (data.type === "new-marker") {
+    addMarkerAndCircle(
+      data.marker.lat,
+      data.marker.lng,
+      getIconFromType(data.marker.type)
+    );
+  }
+};
+
+function addMarkerAndCircle(lat, lng, icon) {
+  var marker = L.marker([lat, lng], { icon: icon }).addTo(map);
+  var circle = L.circle([lat, lng], { radius: 100 }).addTo(map);
+
+  setTimeout(function () {
+    map.removeLayer(marker);
+    map.removeLayer(circle);
+  }, 5000);
+}
 
 if (navigator.geolocation) {
   navigator.geolocation.getCurrentPosition(
@@ -34,29 +67,28 @@ if (navigator.geolocation) {
         attribution: "© OpenStreetMap contributors",
       }).addTo(map);
 
-      function addMarkerAndCircle(lat, lng, icon) {
-        var marker = L.marker([lat, lng], { icon: icon }).addTo(map);
-        var circle = L.circle([lat, lng], { radius: 100 }).addTo(map);
-
-        setTimeout(function () {
-          map.removeLayer(marker);
-          map.removeLayer(circle);
-        }, 5000);
-      }
-
       map.on("click", function (e) {
         const lat = e.latlng.lat;
         const lng = e.latlng.lng;
 
         const popupContent = document.createElement("div");
 
-        // Создаём элементы для выбора иконки
         const icon1Button = document.createElement("img");
         icon1Button.className = "icon-preview";
-        icon1Button.style.width = "38px"; // Устанавливаем желаемую ширину
-        icon1Button.style.height = "38px"; // Устанавливаем желаемую высоту
+        icon1Button.style.width = "38px";
+        icon1Button.style.height = "38px";
         icon1Button.src = customIcon1.options.iconUrl;
         icon1Button.onclick = function () {
+          // Отправляем новую метку на сервер
+          const markerData = {
+            type: "new-marker",
+            marker: {
+              lat: lat,
+              lng: lng,
+              type: "icon1", // Можно задать тип метки для дальнейшей обработки на сервере
+            },
+          };
+          socket.send(JSON.stringify(markerData));
           addMarkerAndCircle(lat, lng, customIcon1);
           map.closePopup();
         };
@@ -64,10 +96,19 @@ if (navigator.geolocation) {
 
         const icon2Button = document.createElement("img");
         icon2Button.className = "icon-preview";
-        icon2Button.style.width = "38px"; // Устанавливаем желаемую ширину
-        icon2Button.style.height = "38px"; // Устанавливаем желаемую высоту
+        icon2Button.style.width = "38px";
+        icon2Button.style.height = "38px";
         icon2Button.src = customIcon2.options.iconUrl;
         icon2Button.onclick = function () {
+          const markerData = {
+            type: "new-marker",
+            marker: {
+              lat: lat,
+              lng: lng,
+              type: "icon2",
+            },
+          };
+          socket.send(JSON.stringify(markerData));
           addMarkerAndCircle(lat, lng, customIcon2);
           map.closePopup();
         };
@@ -75,10 +116,19 @@ if (navigator.geolocation) {
 
         const icon3Button = document.createElement("img");
         icon3Button.className = "icon-preview";
-        icon3Button.style.width = "48px"; // Устанавливаем желаемую ширину
-        icon3Button.style.height = "48px"; // Устанавливаем желаемую высоту
+        icon3Button.style.width = "48px";
+        icon3Button.style.height = "48px";
         icon3Button.src = customIcon3.options.iconUrl;
         icon3Button.onclick = function () {
+          const markerData = {
+            type: "new-marker",
+            marker: {
+              lat: lat,
+              lng: lng,
+              type: "icon3",
+            },
+          };
+          socket.send(JSON.stringify(markerData));
           addMarkerAndCircle(lat, lng, customIcon3);
           map.closePopup();
         };
