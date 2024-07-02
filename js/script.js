@@ -64,7 +64,7 @@ if (navigator.geolocation) {
         icon1Button.src = customIcon1.options.iconUrl;
         icon1Button.onclick = function () {
           sendMarker(lat, lng, customIcon1);
-          map.closePopup();
+          map.closePopup(); // Перенесено после добавления метки
         };
         popupContent.appendChild(icon1Button);
 
@@ -75,7 +75,7 @@ if (navigator.geolocation) {
         icon2Button.src = customIcon2.options.iconUrl;
         icon2Button.onclick = function () {
           sendMarker(lat, lng, customIcon2);
-          map.closePopup();
+          map.closePopup(); // Перенесено после добавления метки
         };
         popupContent.appendChild(icon2Button);
 
@@ -86,27 +86,30 @@ if (navigator.geolocation) {
         icon3Button.src = customIcon3.options.iconUrl;
         icon3Button.onclick = function () {
           sendMarker(lat, lng, customIcon3);
-          map.closePopup();
+          map.closePopup(); // Перенесено после добавления метки
         };
         popupContent.appendChild(icon3Button);
 
-        L.popup().setLatLng([lat, lng]).setContent(popupContent).openOn(map);
+        var popup = L.popup()
+          .setLatLng([lat, lng])
+          .setContent(popupContent)
+          .openOn(map);
+
+        function sendMarker(lat, lng, icon) {
+          const marker = { lat, lng, icon };
+          socket.send(JSON.stringify({ type: "new-marker", marker }));
+        }
+
+        function addMarkerAndCircle(lat, lng, icon) {
+          var marker = L.marker([lat, lng], { icon: icon }).addTo(map);
+          var circle = L.circle([lat, lng], { radius: 100 }).addTo(map);
+
+          setTimeout(function () {
+            map.removeLayer(marker);
+            map.removeLayer(circle);
+          }, 5000);
+        }
       });
-
-      function sendMarker(lat, lng, icon) {
-        const marker = { lat, lng, icon };
-        socket.send(JSON.stringify({ type: "new-marker", marker }));
-      }
-
-      function addMarkerAndCircle(lat, lng, icon) {
-        var marker = L.marker([lat, lng], { icon: icon }).addTo(map);
-        var circle = L.circle([lat, lng], { radius: 100 }).addTo(map);
-
-        setTimeout(function () {
-          map.removeLayer(marker);
-          map.removeLayer(circle);
-        }, 5000);
-      }
     },
     function (error) {
       console.error("Ошибка при определении местоположения: ", error);
